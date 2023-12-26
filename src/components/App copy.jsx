@@ -57,6 +57,7 @@ class App extends Component {
   changeFilter = e => {
     this.setState({ filter: e.currentTarget.value });
   };
+
   filter = findName => {
     this.setState(() => ({
       filter: findName,

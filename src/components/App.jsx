@@ -9,18 +9,38 @@ import data from '../components/contacts.json';
 import React from 'react';
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(() => {
+    return JSON.parse(localStorage.getItem('contacts')) ?? '';
+  });
   const [filter, setFilter] = useState('');
-  console.log(contacts);
 
   useEffect(() => {
     const localData = localStorage.getItem('contacts');
+
     if (localData && JSON.parse(localData).length > 0) {
-      setContacts(() => JSON.parse(localData));
-    } else setContacts(() => data);
+      setContacts(JSON.parse(localData));
+    } else {
+      setContacts(data);
+    }
   }, []);
 
-  // useEffect(() => {}, [contacts]);
+  useEffect(() => {
+    setContacts(prevContacts => {
+      if (prevContacts?.length !== contacts.length) {
+        localStorage.setItem('contacts', JSON.stringify(contacts));
+        return contacts; // Return the updated state
+      }
+      return prevContacts; // Return the previous state if no update is needed
+    });
+  }, [contacts]);
+  // useEffect(() => {
+  //   setContacts(prevContacts => {
+  //     if (prevContacts && prevContacts.length !== contacts.length) {
+  //       localStorage.setItem('contacts', JSON.stringify(contacts));
+  //     }
+  //     // return contacts; // Ensure you return the updated state
+  //   });
+  // }, [contacts]);
 
   const addNewContact = newContact => {
     const nameIsAdded = contacts.some(
@@ -30,6 +50,7 @@ const App = () => {
     if (nameIsAdded) {
       Notify.warning('Name is already added.');
     } else {
+      // setContacts(prevContacts => [...prevContacts, newContact]);
       setContacts(prev => [...prev, { ...newContact, id: nanoid() }]);
     }
   };
@@ -43,20 +64,25 @@ const App = () => {
   // };
 
   const changeFilter = e => {
-    setFilter(prev => {
-      prev = e.currentTarget.value;
-    });
+    setFilter(e.currentTarget.value);
   };
 
-  // const filterName = findName => {
-  //   setFilter(() => findName);
+  // const onRemoveContact = contactId => {
+  //   setContacts(prevContacts =>
+  //     prevContacts.filter(contact => contact.id !== contactId)
+  //   );
   // };
 
   const onRemoveContact = contactId => {
-    setContacts(contacts =>
-      contacts.filter(contact => contact.id !== contactId)
-    );
+    setContacts(prevContacts => {
+      const updatedContacts = prevContacts.filter(
+        contact => contact.id !== contactId
+      );
+      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+      return updatedContacts;
+    });
   };
+
   const shownContacts = filter
     ? contacts.filter(contact =>
         contact.name.toLowerCase().includes(filter.toLowerCase())
