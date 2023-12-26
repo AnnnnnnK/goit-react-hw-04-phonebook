@@ -10,7 +10,7 @@ import React from 'react';
 
 const App = () => {
   const [contacts, setContacts] = useState(() => {
-    return JSON.parse(localStorage.getItem('contacts')) ?? '';
+    return JSON.parse(localStorage.getItem('contacts')) ?? [];
   });
   const [filter, setFilter] = useState('');
 
