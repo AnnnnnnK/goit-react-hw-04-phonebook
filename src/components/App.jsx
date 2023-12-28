@@ -26,21 +26,10 @@ const App = () => {
 
   useEffect(() => {
     setContacts(prevContacts => {
-      if (prevContacts?.length !== contacts.length) {
-        localStorage.setItem('contacts', JSON.stringify(contacts));
-        return contacts; // Return the updated state
-      }
-      return prevContacts; // Return the previous state if no update is needed
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+      return prevContacts;
     });
   }, [contacts]);
-  // useEffect(() => {
-  //   setContacts(prevContacts => {
-  //     if (prevContacts && prevContacts.length !== contacts.length) {
-  //       localStorage.setItem('contacts', JSON.stringify(contacts));
-  //     }
-  //     // return contacts; // Ensure you return the updated state
-  //   });
-  // }, [contacts]);
 
   const addNewContact = newContact => {
     const nameIsAdded = contacts.some(
@@ -67,12 +56,6 @@ const App = () => {
     setFilter(e.currentTarget.value);
   };
 
-  // const onRemoveContact = contactId => {
-  //   setContacts(prevContacts =>
-  //     prevContacts.filter(contact => contact.id !== contactId)
-  //   );
-  // };
-
   const onRemoveContact = contactId => {
     setContacts(prevContacts => {
       const updatedContacts = prevContacts.filter(
@@ -92,7 +75,7 @@ const App = () => {
   return (
     <>
       <ContactForm addNewContact={addNewContact} />
-      <Filter value={filter} onChange={changeFilter} />
+      {contacts.length > 0 && <Filter value={filter} onChange={changeFilter} />}
       {contacts.length > 0 && (
         <ContactsList contacts={shownContacts} handleDelete={onRemoveContact} />
       )}
