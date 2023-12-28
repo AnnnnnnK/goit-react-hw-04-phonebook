@@ -17,7 +17,7 @@ const App = () => {
   useEffect(() => {
     const localData = localStorage.getItem('contacts');
 
-    if (localData && JSON.parse(localData).length > 0) {
+    if (localData && JSON.parse(localData).length >= 0) {
       setContacts(JSON.parse(localData));
     } else {
       setContacts(data);
